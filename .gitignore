@@ -1,2 +1,15 @@
 venv-orm/
 *sqlite3
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.pot
+*.mo
+*.swp
+*.swo
+.env
+/static/
+/media/
+/node_modules/
