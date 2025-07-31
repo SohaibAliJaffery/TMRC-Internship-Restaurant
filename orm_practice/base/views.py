@@ -2,10 +2,11 @@ from django.shortcuts import render
 from .forms import RatingForm
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Restaurant, Rating, Sale, Staff, StaffRestaurant, Spending
-from .serializers import RestaurantSerializer, RatingSerializer, SaleSerializer, RestaurantSummarySerializer, RatingDetailSerializer, FiveStarRestaurantSalesSerializer, GetStaffForAllRestaurantsSerializer
+from .models import Restaurant, Rating, Sale, Staff, StaffRestaurant, Spending, Product, Order
+from .serializers import RestaurantSerializer, RatingSerializer, SaleSerializer, RestaurantSummarySerializer, RatingDetailSerializer, FiveStarRestaurantSalesSerializer, GetStaffForAllRestaurantsSerializer, ProductOrderSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import StdDev, Avg, Case, Count, F, Max, Min, Prefetch, Q, Sum, When
+from django.db import transaction
 
 
 # Create your views here.
@@ -133,3 +134,17 @@ def get_net_income_for_all(request):
   serializer = AllRestaurantNetIncomeSerializer(restaurants, many=True)
   return Response({"status": "success", "data": serializer.data})
 
+@api_view(['POST'])
+def order_product(request):
+  serializer = ProductOrderSerializer(data=request.data)
+  if serializer.is_valid():
+    with transaction.atomic():
+      product = Product.objects.get(pk=serializer.validated_data['product'].id)
+      num_items = serializer.validated_data['number_of_items']
+      if product.number_in_stock < num_items:
+        return Response({"status": "failed", "message": "Not enough stock"}, status=400)
+      order = serializer.save()
+      product.number_in_stock -= num_items
+      product.save()
+      return Response({"status": "success", "data": serializer.data}, status=201)
+  return Response({"status": "failed", "message": "Invalid data"}, status=400)

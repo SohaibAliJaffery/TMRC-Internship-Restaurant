@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurant, Rating, Sale, Staff, StaffRestaurant
+from .models import Restaurant, Rating, Sale, Staff, StaffRestaurant, Order, Spending, Product
 
 class RestaurantSerializer(serializers.ModelSerializer):
   class Meta:
@@ -85,3 +85,11 @@ class AllRestaurantNetIncomeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Restaurant
     fields = ['id', 'name', 'total_sales', 'total_spendings', 'net_income']
+
+class ProductStockException(Exception):
+  pass
+
+class ProductOrderSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Order
+    fields = ('product', 'number_of_items')
