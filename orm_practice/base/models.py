@@ -88,3 +88,20 @@ class Spending(models.Model):
 
   def __str__(self):
     return f"{self.restaurant.name} - {self.category}: {self.amount}"
+
+
+class Product(models.Model):
+  name = models.CharField(max_length=100)
+  number_in_stock = models.PositiveSmallIntegerField()
+
+  def __str__(self):
+    return self.name
+  
+
+class Order(models.Model):
+  product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
+  number_of_items = models.PositiveSmallIntegerField()
+  # user
+
+  def __str__(self):
+    return f'{self.number_of_items} x {self.product.name}'

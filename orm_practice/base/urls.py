@@ -11,6 +11,8 @@ urlpatterns = [
   path('get-staff-for-all/', views.get_staff_for_all_restaurants, name='get-staff-for-all-restaurants'),
   path('get-net-income-1/', views.get_net_income_1, name='restaurant-net-income'),
   path('get-net-income-all/', views.get_net_income_for_all, name='all-restaurant-net-income'),
+  path('order/', views.order_product, name='order-product'),
+
 ]
 
 
