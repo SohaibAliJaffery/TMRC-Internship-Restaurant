@@ -12,6 +12,7 @@ urlpatterns = [
   path('get-net-income-1/', views.get_net_income_1, name='restaurant-net-income'),
   path('get-net-income-all/', views.get_net_income_for_all, name='all-restaurant-net-income'),
   path('order/', views.order_product, name='order-product'),
+  path('order_locked/', views.order_product_locked_rows, name='order-product-locked'),
 
 ]
 

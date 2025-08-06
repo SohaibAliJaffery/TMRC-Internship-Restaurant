@@ -148,3 +148,21 @@ def order_product(request):
       product.save()
       return Response({"status": "success", "data": serializer.data}, status=201)
   return Response({"status": "failed", "message": "Invalid data"}, status=400)
+
+
+
+@api_view(['POST'])
+def order_product_locked_rows(request):
+  serializer = ProductOrderSerializer(data=request.data)
+  if serializer.is_valid():
+    with transaction.atomic():
+      product = Product.objects.select_for_update().get(pk=serializer.validated_data['product'].id)
+      num_items = serializer.validated_data['number_of_items']
+      if product.number_in_stock < num_items:
+        return Response({"status": "failed", "message": "Not enough stock"}, status=400)
+      order = serializer.save()
+      product.number_in_stock -= num_items
+      product.save()
+      return Response({"status": "success", "data": serializer.data}, status=201)
+  return Response({"status": "failed", "message": "Invalid data"}, status=400)
+
